@@ -5,10 +5,8 @@ import keras
 
 def get_model():
     model = keras.Sequential([
-        keras.layers.Dense(512, activation='relu', input_shape=(11,)),
-        keras.layers.Dense(256, activation='relu'),
-        keras.layers.Dense(128, activation='relu'),
-        keras.layers.Dense(64, activation='relu'),
+        keras.layers.Dense(10, input_shape=(17,)),
+        keras.layers.LeakyReLU(),
         keras.layers.Dense(1, activation='sigmoid', name='output')  # sigmoid bc binary classification
     ])
     if os.path.isfile('model.keras'):
