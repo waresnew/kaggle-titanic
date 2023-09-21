@@ -7,4 +7,6 @@ Uses LightGBM, and Optuna for hyperparameter tuning
 
 Basic feature engineering was done to extract titles from names and determine family size
 
+![img.png](img.png)
 
+![img_1.png](img_1.png)
