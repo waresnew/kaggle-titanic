@@ -1,13 +1,12 @@
-import optuna.logging
 import pandas as pd
 from lightgbm import early_stopping
 from optuna.integration import LightGBMTunerCV
-from sklearn.metrics import accuracy_score, balanced_accuracy_score
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 from preprocess import preprocess
 import lightgbm as lgb
-
+# usually takes a few tries to get 79.665% accuracy, usually it's when the final test acc is 80% < x < 81%
 csv = preprocess(pd.read_csv('train.csv'))
 ans = csv['Survived']
 csv = csv.drop(['Survived'], axis=1)
@@ -24,11 +23,11 @@ params = {
 }
 # only do cv on train data, not test data (do not touch test data until final diagnostic) (good practice)
 # early stopping is a hyperparamter that can be tuned from validation data
-tuner = LightGBMTunerCV(params, data, verbose_eval=False, num_boost_round=1000, early_stopping_rounds=10)
+tuner = LightGBMTunerCV(params, data, verbose_eval=False, num_boost_round=1000, callbacks=[early_stopping(10)])
 tuner.run()
 print('Best score: ', tuner.best_score)
 print('Best params: ', tuner.best_params)
-model = lgb.train(tuner.best_params, data, num_boost_round=1000, callbacks=[early_stopping(10)], valid_sets=[data, val])
+model = lgb.train(tuner.best_params, data, num_boost_round=1000, callbacks=[early_stopping(10)], valid_sets=[val])
 print('Accuracy: ', accuracy_score(y_test, model.predict(x_test, num_iteration=model.best_iteration).round()))
 
 submit = preprocess(pd.read_csv('test.csv'))
